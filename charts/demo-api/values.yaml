@@ -1,0 +1,56 @@
+# Default values. Environment-specific overrides envs/<env>/ mein hain.
+
+replicaCount: 2
+
+image:
+  repository: ghcr.io/yashdua22/gitops-app
+  tag: "latest"          # CI envs/*/ mein override karta hai
+  pullPolicy: IfNotPresent
+
+# GHCR package public hai — pull secret ki zaroorat nahi.
+# Private karo to yahan secret ka naam daalna.
+imagePullSecrets: []
+
+nameOverride: ""
+
+aws:
+  region: us-east-1
+
+env:
+  GREETING: "hello"
+  APP_VERSION: "0.1.0"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: false
+  className: nginx
+  host: ""
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+externalSecret:
+  enabled: true
+  refreshInterval: 1h
+  secretStoreRef: aws-secrets-manager
+  remoteKey: ""          # envs/ mein set hota hai
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+containerSecurityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]

@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-api-prod
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  sources:
+    - repoURL: https://github.com/yashdua22/gitops-config.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/yashdua22/gitops-config.git
+      targetRevision: main
+      path: charts/demo-api
+      helm:
+        valueFiles:
+          - $values/envs/prod/demo-api-values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-prod
+
+  # DELIBERATE: prod pe `automated` nahi hai.
+  # Sync manually approve hoga: Argo UI se ya `argocd app sync demo-api-prod`
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

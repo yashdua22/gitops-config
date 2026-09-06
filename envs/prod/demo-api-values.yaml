@@ -1,0 +1,24 @@
+replicaCount: 3
+
+image:
+  tag: "v0.1.0"
+
+env:
+  GREETING: "hello from prod"
+  APP_VERSION: "prod"
+
+externalSecret:
+  enabled: true
+  remoteKey: gitops-demo/demo-api/prod
+
+ingress:
+  enabled: true
+  className: nginx
+  host: demo.example.com
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 512Mi

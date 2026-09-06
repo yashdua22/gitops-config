@@ -1,0 +1,22 @@
+replicaCount: 1
+
+image:
+  tag: "v0.1.0"          # <-- GitHub Actions is line ko update karta hai
+
+env:
+  GREETING: "hello from dev"
+  APP_VERSION: "dev"
+
+externalSecret:
+  enabled: true
+  remoteKey: gitops-demo/demo-api/dev
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 64Mi
+  limits:
+    memory: 256Mi

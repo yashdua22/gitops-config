@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: demo-api-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  sources:
+    - repoURL: https://github.com/yashdua22/gitops-config.git
+      targetRevision: main
+      ref: values
+    - repoURL: https://github.com/yashdua22/gitops-config.git
+      targetRevision: main
+      path: charts/demo-api
+      helm:
+        valueFiles:
+          - $values/envs/dev/demo-api-values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: demo-dev
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m
